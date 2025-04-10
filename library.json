@@ -1,0 +1,32 @@
+{
+  "name": "WiFiLib",
+  "version": "1.0.0",
+  "description": "Biblioteca de controle de motor BLDC com drive BLD600",
+  "keywords": ["WiFi", "Wi-Fi", "WiFi connection", "arduino"],
+  "authors": [
+    {
+      "name": "Carlos Augusto D'Orazio Turqueti",
+      "email": "carlosturqueti@gmail.com",
+      "url": "https://github.com/cturqueti"
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": [
+    "espressif32",
+    "espressif8266"
+  ],
+  "dependencies": {
+    "LogLibrary": ">=1.0.0",
+    "ArduinoJson": ">=6.0.0",
+    "LittleFS": ">=3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cturqueti/WiFiLib.git"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/cturqueti/WiFiLib",
+  "examples": [
+
+  ]
+}
