@@ -7,7 +7,7 @@ Biblioteca para gerenciamento de conexões WiFi em dispositivos ESP32/ESP8266 co
 ![Versão](https://img.shields.io/badge/Vers%C3%A3o-1.0.0-green.svg?style=plastic&logo=github)  
 
 
-##📦 Recursos Principais
+## 📦 Recursos Principais
 - ✅ Conexão WiFi com suporte a STA (station) mode
 
 - ⚙️ Configuração via JSON armazenada em LittleFS/SPIFFS
@@ -31,7 +31,7 @@ Adicione no seu platformio.ini:
 ```ini
 Copy
 lib_deps =
-    https://github.com/seu-usuario/WiFiLib.git
+    https://github.com/seu-usuario/MiniOsWiFiLib.git
 ```
 ### Via Arduino IDE
 Baixe o ZIP da biblioteca
@@ -107,7 +107,7 @@ void loop() {
 |isDhcp()	|bool	|Verifica se está usando DHCP|
 |isSsid()	|bool	|Verifica se SSID foi configurado|
 
-##💡 Exemplos
+## 💡 Exemplos
 ### Exemplo Básico
 ```cpp
 #include <WiFiLib.h>
@@ -165,23 +165,23 @@ void loop() {}
 ### Problemas Comuns
 1. Falha ao carregar configuração
 
-- Verifique se o arquivo JSON existe no sistema de arquivos
+  - Verifique se o arquivo JSON existe no sistema de arquivos
 
-- Valide a sintaxe do JSON
+  - Valide a sintaxe do JSON
 
-- Confira as permissões do arquivo
+  - Confira as permissões do arquivo
 
 2. Falha na conexão WiFi
 
-- Verifique SSID e senha
+  - Verifique SSID e senha
 
-- Confira se a rede está disponível
+  - Confira se a rede está disponível
 
-- No modo IP estático, valide os endereços
+  - No modo IP estático, valide os endereços
 
 3. Problemas com LittleFS
 
-- Certifique-se de que o sistema de arquivos foi inicializado
+  - Certifique-se de que o sistema de arquivos foi inicializado
 
 ```cpp
 
@@ -209,4 +209,4 @@ Distribuído sob licença Apache 2.0. Veja LICENSE para mais informações.
 ## ✉️ Contato
 Carlos Augusto D'Orazio Turqueti - @cturqueti - carlosturqueti@gmail.com
 
-Link do Projeto: https://github.com/cturqueti/WiFiLib
+Link do Projeto: https://github.com/cturqueti/MiniOsWiFiLib
