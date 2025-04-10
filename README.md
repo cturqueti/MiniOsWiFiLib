@@ -203,8 +203,23 @@ Contribuições são bem-vindas! Siga estes passos:
 
 5. Abra um Pull Request
 
-## 📄 Licença
-Distribuído sob licença Apache 2.0. Veja LICENSE para mais informações.
+## 📜 Licença
+Copyright 2025 cturqueti
+
+Licenciado sob a Apache License, Versão 2.0 (a "Licença");
+você não pode usar este arquivo exceto em conformidade com a Licença.
+Você pode obter uma cópia da Licença em:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+A menos que exigido por lei aplicável ou acordado por escrito, o software
+distribuído sob a Licença é distribuído "COMO ESTÁ",
+SEM GARANTIAS OU CONDIÇÕES DE QUALQUER TIPO, expressas ou implícitas.
+Consulte a Licença para o idioma específico que rege as permissões e
+limitações sob a Licença.
+
+Consulte o arquivo [LICENSE](LICENSE) para o texto completo da licença e
+[NOTICE](NOTICE) para informações sobre atribuições e histórico de modificações.
 
 ## ✉️ Contato
 Carlos Augusto D'Orazio Turqueti - @cturqueti - carlosturqueti@gmail.com
