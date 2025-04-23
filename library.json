@@ -1,8 +1,8 @@
 {
   "name": "WiFiLib",
-  "version": "1.0.0",
-  "description": "Biblioteca de controle de motor BLDC com drive BLD600",
-  "keywords": ["WiFi", "Wi-Fi", "WiFi connection", "arduino"],
+  "version": "2.0.0",
+  "description": "Biblioteca para conexão WiFi no ESP32 e ESP8266",
+  "keywords": ["WiFi", "Wi-Fi", "WiFi connection", "arduino", "captive portal"],
   "authors": [
     {
       "name": "Carlos Augusto D'Orazio Turqueti",
@@ -16,7 +16,7 @@
     "espressif8266"
   ],
   "dependencies": {
-    "LogLibrary": ">=1.0.0",
+    "LogLibrary": ">=1.0.1",
     "ArduinoJson": ">=6.0.0",
     "LittleFS": ">=3.0.0"
   },
