@@ -1,75 +1,57 @@
 #ifndef WIFILIB_H
 #define WIFILIB_H
+
+#include "ErrorLib.h"
+#include "WiFiItems.h"
 #include <Arduino.h>
-#include <ArduinoJson.h>
-#include <LittleFS.h>
+// #include <ArduinoJson.h>
+// #include <LittleFS.h>
+#include "WiFiCaptivePortal.h"
 #include <LogLibrary.h>
+#include <Preferences.h>
 #include <vector>
 
 // #include "Utils.h"
-#include "WiFi.h"
+#include <ESPmDNS.h>
+#include <WiFi.h>
 // #include "WiFiAP.h"
 
-struct WiFiItems
-{
-    std::string ssid;
-    std::string password;
-    bool dhcpFlag;
-    std::vector<uint8_t> ip, gateway, subnet;
-    bool configLoaded;
-    int connectionStatus;
-    int power;
-    WiFiItems() : ip(4),
-                  gateway(4),
-                  subnet(4),
-                  configLoaded(false),
-                  connectionStatus(0),
-                  power(0)
-    {
-    }
-    void reset()
-    {
-        ssid.clear();
-        password.clear();
-        configLoaded = false;
-        connectionStatus = 0;
-    }
-};
+class WiFiLib {
+  public:
+    static constexpr std::string_view nvs_namespace = "wifi_config";
 
-class WiFiLib
-{
-public:
-    enum class WiFiLog
-    {
-        DISABLE = 0,
-        ENABLE
-    };
-    static WiFiLib &getInstance()
-    {
-        static WiFiLib instance;
+    static WiFiLib &getInstance(WiFiLog log = WiFiLog::ENABLE) {
+        static WiFiLib instance(log);
         return instance;
     }
+    ~WiFiLib();
 
-    void begin(WiFiItems wifi);
-    void begin(WiFiItems wifi, WiFiLog log);
+    void begin();
 
-    WiFiItems loadConfig(std::string fileAddress);
+    bool isCredentials();
 
     inline bool isConfigLoaded() { return _wifi.configLoaded; }
-    inline bool isDhcp() { return _wifi.dhcpFlag; }
-    inline bool isSsid() { return _wifi.ssid.size() > 0; }
+    inline bool isDhcp() { return _wifi.dhcp; }
+    inline bool isSsid() { return _wifi.ssid.length() > 0; }
 
-private:
-    WiFiLib();                                    // Construtor privado
+  private:
+    WiFiLib(WiFiLog log);                         // Construtor privado
     WiFiLib(const WiFiLib &) = delete;            // Previne cópia
     WiFiLib &operator=(const WiFiLib &) = delete; // Previne atribuição
 
     void connectToWiFi(WiFiItems wifi);
     void WiFiEvent(WiFiEvent_t event);
+    void startAP();
+    bool _beginCredentials();
+    bool _loadCredentials(WiFiItems &wifi);
 
     static const char *TAG;
     WiFiItems _wifi;
     WiFiLog _log;
+    // WiFiCredentialsNVS nvs;
+    // WiFiItems _wifiConfig;
+    WiFiCaptivePortal _captivePortal;
+    mutable Preferences _preferences;
 };
 
 #endif // WiFiLib_H

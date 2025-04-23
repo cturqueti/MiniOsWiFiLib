@@ -3,9 +3,3 @@
 .gitignore
 platformio.ini
 main.cpp
-Service.cpp
-Service.h
-ServicesManager.cpp
-ServicesManager.h
-Utils.cpp
-Utils.h

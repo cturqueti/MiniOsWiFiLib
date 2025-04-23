@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração de Rede</title>
+    <!-- <link rel="stylesheet" href="style.css" media="screen"> -->
+
+</head>
+<body>
+    <header>
+        <!-- <h1>Conexão</h1> -->
+        <div class="menu-toggle">☰</div>
+        <nav>
+            <ul>
+                <li><a href="#block-1">Início</a></li>
+                <li><a href="#block-2">Credenciais</a></li>
+                <li><a href="#block-3">Configurações</a></li>
+                <li><a href="#block-4">Ajuda</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="block-1" class="card grid-center">
+        <div class="card-content">
+            <h2>Configuração de Rede</h2>
+            <p>O sistema não encontrou configurações de rede válidas, necessário selecionar a rede e o modo de operação.</p>
+        </div>
+    </section>
+
+    <section id="block-2" class="card">
+        <h2>Seleção de Rede</h2>
+        <form id="credentials">
+            <label for="ssid">Rede:</label>
+            <div class="selector">
+                <select id="ssid" name="ssid" required>
+                  <option value="">Selecione uma rede...</option>
+                  <!-- As redes serão preenchidas via JavaScript -->
+                </select>
+                <button id="refresh-wifi" type="button" title="Atualizar redes" class="refresh-button">
+                    <svg
+                    id="Layer_1"
+                    data-name="Layer 1"
+                    viewBox="0 0 120 120"
+                    version="1.1"
+                    width="24"
+                    height="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:svg="http://www.w3.org/2000/svg">
+                   <defs
+                      id="defs1" />
+                   <title
+                      id="title1">update</title>
+                   <path
+                      d="m 111.9,61.57 a 5.36,5.36 0 0 1 10.71,0 61.3,61.3 0 0 1 -105.07,42.91 v 12.35 a 5.36,5.36 0 0 1 -10.72,0 V 89.31 A 5.36,5.36 0 0 1 12.18,84 H 40 a 5.36,5.36 0 1 1 0,10.71 H 23 a 50.6,50.6 0 0 0 88.87,-33.1 z M 106.6,5.36 a 5.36,5.36 0 1 1 10.71,0 V 33.14 A 5.36,5.36 0 0 1 112,38.49 H 84.44 a 5.36,5.36 0 1 1 0,-10.71 H 99 A 50.6,50.6 0 0 0 10.71,61.57 5.36,5.36 0 1 1 0,61.57 61.31,61.31 0 0 1 91.07,8 61.83,61.83 0 0 1 106.6,20.27 Z"
+                      id="path1" />
+                 </svg>
+                </button>
+            </div>
+            <div id="password-field" class="hidden">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password">
+            </div>
+
+        </form>
+    </section>
+
+    <section id="block-3" class="card">
+        <h2>Configuração de rede</h2>
+        <form id="static-ip-form">
+
+            <label class="inline-checkbox ">
+                <input type="checkbox" id="dhcp-checkbox" checked>
+                <span>Usar DHCP</span>
+            </label>
+            <p> </p>
+            <label for="mDns">Nome do Dispositivo:</label>
+            <input type="text" id="mDns" name="mDns" placeholder="Ex: meuesp32">
+            
+            <label>Endereço IP:</label>
+            <div class="ip-group">
+                <input type="number" id="ip1" min="0" max="255" value="192" disabled>
+                <span>.</span>
+                <input type="number" id="ip2" min="0" max="255" value="168" disabled>
+                <span>.</span>
+                <input type="number" id="ip3" min="0" max="255" value="1" disabled>
+                <span>.</span>
+                <input type="number" id="ip4" min="0" max="255" value="100" disabled>
+            </div>
+            
+            <label>Gateway:</label>
+            <div class="ip-group">
+                <input type="number" id="gw1" min="0" max="255" value="192" disabled>
+                <span>.</span>
+                <input type="number" id="gw2" min="0" max="255" value="168" disabled>
+                <span>.</span>
+                <input type="number" id="gw3" min="0" max="255" value="1" disabled>
+                <span>.</span>
+                <input type="number" id="gw4" min="0" max="255" value="1" disabled>
+            </div>
+            
+            <label>Máscara de Sub-rede:</label>
+            <div class="ip-group">
+                <input type="number" id="sn1" min="0" max="255" value="255" disabled>
+                <span>.</span>
+                <input type="number" id="sn2" min="0" max="255" value="255" disabled>
+                <span>.</span>
+                <input type="number" id="sn3" min="0" max="255" value="255" disabled>
+                <span>.</span>
+                <input type="number" id="sn4" min="0" max="255" value="0" disabled>
+            </div>
+            
+            <button type="button" id="save-wifi-config-btn">Salvar Configuração</button>
+        </form>
+    </section>
+
+    <section id="block-4" class="card">
+        <h2>Ajuda</h2>
+        <p><strong>Seleção de Rede:</strong> Escolha sua rede WiFi e insira a senha</p>
+        <p><strong>IP Estático:</strong> Configure manualmente se necessário</p>
+        <p><strong>Suporte:</strong> contato@exemplo.com</p>
+    </section>
+
+    <footer>
+        <p>Desenvolvido para ESP32</p>
+    </footer>
+
+    <div id="modal" class="hidden">
+        <div class="modal-content">
+            <button id="modal-close" class="close-button">
+                <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                version="1.1"
+                id="svg1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:svg="http://www.w3.org/2000/svg">
+               <defs
+                  id="defs1" />
+               <g
+                  id="layer1">
+                 <path
+                    style="fill:#000000"
+                    d="M 0,0 16,16"
+                    id="path3" />
+                 <path
+                    style="fill:#000000"
+                    d="M 0,16 16,0"
+                    id="path4" />
+                 <path
+                    style="fill:#000000"
+                    d="M 16,0 0,16 Z"
+                    id="path5" />
+                 <path
+                    style="fill:#000000;stroke:#000000;stroke-width:3;stroke-dasharray:none"
+                    d="M 0.85874464,15.141255 15.141256,0.8587436"
+                    id="path9" />
+                 <path
+                    style="fill:#000000;stroke:#000000;stroke-width:3;stroke-dasharray:none"
+                    d="M 0.85874463,0.85874463 15.141256,15.141256"
+                    id="path10" />
+               </g>
+             </svg>
+            </button>
+            <h3 id="modal-title">Aguarde</h3>
+            <p id="modal-message">Processando sua solicitação...</p>
+            <button id="save-wifi-credentials-btn" class="hidden">Salvar</button>
+        </div>
+    </div>
+
+    <!-- <script src="mock.js"></script>
+    <script src="script.js"></script> -->
+</body>
+</html>

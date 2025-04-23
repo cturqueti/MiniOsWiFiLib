@@ -1,0 +1,6 @@
+{
+  "hostName": "Modulo1",
+  "service": "_mqttSlave",
+  "protocol": "_tcp",
+  "port": 1883
+}

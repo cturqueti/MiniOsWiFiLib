@@ -1,0 +1,17 @@
+{
+  "serverHostName": "mqtt-server",
+  "mqttServiceName": "mqtt",
+  "protocol": "tcp",
+  "user": "sideout",
+  "password": "sidetouch",
+  "topics": [
+    {
+      "topic": "#",
+      "Qos": 0
+    },
+    {
+      "topic": "/teste",
+      "Qos": 0
+    }
+  ]
+}
