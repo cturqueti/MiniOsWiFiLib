@@ -5,39 +5,42 @@
 #include <LogLibrary.h>
 #include <vector>
 
-enum ErrorCode {
-    NONE,
-    SSID_NOT_FOUND,
-    NVS_BEGIN_ERROR,
-    LITTLEFS_MOUNT_ERROR,
-    FILE_NOT_FOUND,
-    FILE_READ_ERROR,
-    CREDENTIALS_SAVE_ERROR,
-    FILE_NOT_CREATED,
-    MDNS_ERROR,
-    NVS_SAVE_ERROR,
+enum ErrorCode
+{
+  NONE,
+  SSID_NOT_FOUND,
+  NVS_BEGIN_ERROR,
+  LITTLEFS_MOUNT_ERROR,
+  FILE_NOT_FOUND,
+  FILE_READ_ERROR,
+  CREDENTIALS_SAVE_ERROR,
+  FILE_NOT_CREATED,
+  MDNS_ERROR,
+  NVS_SAVE_ERROR,
+  MDNS_NOT_STARTED,
 
-    WARNING,
-    INFO,
-    SENSOR_FAIL,
-    WIFI_DISCONNECTED,
-    INVALID_DATA,
-    ERROR_TYPE_COUNT
+  WARNING,
+  INFO,
+  SENSOR_FAIL,
+  WIFI_DISCONNECTED,
+  INVALID_DATA,
+  ERROR_TYPE_COUNT
 };
 
-class ErrorLib {
-  public:
-    ErrorLib();
-    ~ErrorLib();
-    void addError(ErrorCode error);
-    void clearErrors();
-    void clearError(ErrorCode error);
-    bool findError(ErrorCode error);
-    void printErrors();
+class ErrorLib
+{
+public:
+  ErrorLib();
+  ~ErrorLib();
+  void addError(ErrorCode error);
+  void clearErrors();
+  void clearError(ErrorCode error);
+  bool findError(ErrorCode error);
+  void printErrors();
 
-    std::vector<ErrorCode> _errors;
+  std::vector<ErrorCode> _errors;
 
-  private:
+private:
 };
 
 extern ErrorLib ERRORS_LIST;
