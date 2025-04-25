@@ -668,7 +668,7 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
     }
     else
     {
-        mdnsHostname = config.mDns;
+        String mdnsHostname = config.mDns;
     }
     if (_log == WiFiLog::ENABLE)
     {
