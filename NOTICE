@@ -18,3 +18,4 @@ Modification History:
 2025-04-09 - v2.0.0 - Functional release (by cturqueti)
 - Functional version
 
+2025-04-25 - v2.0.2 - Added mdnshostname global variable (by cturqueti)

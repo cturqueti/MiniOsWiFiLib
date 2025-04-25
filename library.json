@@ -1,6 +1,6 @@
 {
   "name": "WiFiLib",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "Biblioteca para conexão WiFi no ESP32 e ESP8266",
   "keywords": ["WiFi", "Wi-Fi", "WiFi connection", "arduino", "captive portal"],
   "authors": [
