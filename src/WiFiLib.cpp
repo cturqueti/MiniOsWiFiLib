@@ -22,7 +22,10 @@ void WiFiLib::begin()
                 {
                     LOG_INFO("[WIFI] Wi-Fi started");
                 }
-                MDNS.begin(_wifi.mDns.c_str());
+                if (_log == WiFiLog::ENABLE && MDNS.begin(_wifi.mDns.c_str()))
+                {
+                    LOG_INFO("[WIFI] MDNS started with hostname: %s", _wifi.mDns.c_str());
+                }
             }
         }
         else
