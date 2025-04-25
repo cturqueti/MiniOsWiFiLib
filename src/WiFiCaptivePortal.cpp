@@ -671,6 +671,10 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
     else
     {
         mdnsHostname = config.mDns;
+        if (_log == WiFiLog::ENABLE)
+        {
+            LOG_INFO("[CAPTIVE PORTAL] mDNS iniciado com sucesso, com hostname: %s", mdnsHostname.c_str());
+        }
     }
     if (_log == WiFiLog::ENABLE)
     {
