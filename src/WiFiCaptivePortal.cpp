@@ -1,6 +1,8 @@
 #include "WiFiCaptivePortal.h"
 #include <LittleFS.h>
 
+String mdnsHostname = "";
+
 WiFiCaptivePortal::WiFiCaptivePortal(WiFiLog log) : _server(80), _isRunning(false), _serverTaskHandle(NULL)
 {
     _log = log;
@@ -668,7 +670,7 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
     }
     else
     {
-        String mdnsHostname = config.mDns;
+        mdnsHostname = config.mDns;
     }
     if (_log == WiFiLog::ENABLE)
     {
