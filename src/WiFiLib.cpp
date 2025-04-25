@@ -22,6 +22,7 @@ void WiFiLib::begin()
                 {
                     LOG_INFO("[WIFI] Wi-Fi started");
                 }
+                _loadSettings();
                 if (!MDNS.begin(_wifi.mDns))
                 {
                     if (_log == WiFiLog::ENABLE)
@@ -210,4 +211,62 @@ bool WiFiLib::_loadCredentials(WiFiItems &wifi)
     }
 
     return false;
+}
+
+bool WiFiLib::_loadSettings()
+{
+    if (_log == WiFiLog::ENABLE)
+    {
+        LOG_INFO("[WiFi] Loading settings");
+    }
+
+    JsonDocument doc;
+    String configPath = String(configFolder.data()) + "/configWiFi.json";
+    File configWiFi = LittleFS.open(configPath, "r");
+    if (!configWiFi)
+    {
+        if (_log == WiFiLog::ENABLE)
+        {
+            LOG_ERROR("[WiFi] Failed to open file %s for reading", configPath.c_str());
+        }
+        ERRORS_LIST.addError(ErrorCode::FILE_NOT_FOUND);
+        return false;
+    }
+
+    DeserializationError error = deserializeJson(doc, configWiFi);
+    if (error)
+    {
+        if (_log == WiFiLog::ENABLE)
+        {
+            LOG_ERROR("[WiFi] JSON inválido: %s", error.c_str());
+        }
+        ERRORS_LIST.addError(ErrorCode::JSON_ERROR);
+        return false;
+    }
+    _wifi.mDns = doc["mDns"].as<String>().c_str();
+    _wifi.dhcp = doc["dhcp"].as<bool>();
+    if (!_wifi.dhcp)
+    {
+        _wifi.ip = IPAddress(doc["ip"].as<String>().c_str());
+        _wifi.gateway = IPAddress(doc["gateway"].as<String>().c_str());
+        _wifi.subnet = IPAddress(doc["subnet"].as<String>().c_str());
+    }
+    else
+    {
+        _wifi.ip = WiFi.localIP();
+        _wifi.gateway = WiFi.gatewayIP();
+        _wifi.subnet = WiFi.subnetMask();
+    }
+
+    configWiFi.close();
+
+    if (_log == WiFiLog::ENABLE)
+    {
+        LOG_DEBUG("[WiFi] mDns: %s", _wifi.mDns);
+        LOG_DEBUG("[WiFi] dhcp: %s", _wifi.dhcp ? "true" : "false");
+        LOG_DEBUG("[WiFi] ip: %s", _wifi.ip.toString().c_str());
+        LOG_DEBUG("[WiFi] gateway: %s", _wifi.gateway.toString().c_str());
+        LOG_DEBUG("[WiFi] subnet: %s", _wifi.subnet.toString().c_str());
+    }
+    return true;
 }

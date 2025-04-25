@@ -15,6 +15,7 @@ class WiFiLib
 {
 public:
   static constexpr std::string_view nvs_namespace = "wifi_config";
+  static constexpr std::string_view configFolder = "/Config";
 
   static WiFiLib &getInstance(WiFiLog log = WiFiLog::ENABLE)
   {
@@ -42,6 +43,8 @@ private:
   void WiFiEvent(WiFiEvent_t event);
   bool _beginCredentials();
   bool _loadCredentials(WiFiItems &wifi);
+
+  bool _loadSettings();
 
   static const char *TAG;
   WiFiItems _wifi;

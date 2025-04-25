@@ -18,6 +18,7 @@ enum ErrorCode
   MDNS_ERROR,
   NVS_SAVE_ERROR,
   MDNS_NOT_STARTED,
+  JSON_ERROR,
 
   WARNING,
   INFO,
