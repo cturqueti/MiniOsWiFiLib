@@ -17,8 +17,6 @@
 #define CAPTIVE_PORTAL_DNS_PORT 53
 #define CAPTIVE_PORTAL_TASK_STACK_SIZE 4096
 
-extern String mdnsHostname;
-
 class WiFiCaptivePortal
 {
 private:

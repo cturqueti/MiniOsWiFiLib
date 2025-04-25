@@ -16,10 +16,13 @@ void WiFiLib::begin()
         if (isSsid())
         {
             // Start Wifi
-            connectToWiFi(_wifi);
-            if (_log == WiFiLog::ENABLE)
+            if (connectToWiFi(_wifi))
             {
-                LOG_INFO("[WIFI] Wi-Fi started");
+                if (_log == WiFiLog::ENABLE)
+                {
+                    LOG_INFO("[WIFI] Wi-Fi started");
+                }
+                MDNS.begin(_wifi.mDns.c_str());
             }
         }
         else
@@ -49,7 +52,7 @@ bool WiFiLib::isCredentials()
     return true;
 }
 
-void WiFiLib::connectToWiFi(WiFiItems wifi)
+bool WiFiLib::connectToWiFi(WiFiItems wifi)
 {
     if (_log == WiFiLog::ENABLE)
     {
@@ -77,7 +80,10 @@ void WiFiLib::connectToWiFi(WiFiItems wifi)
     while (WiFi.status() != WL_CONNECTED && attempts < maxAttempts)
     {
         vTaskDelay(pdMS_TO_TICKS(200));
-        printf(".");
+        if (_log == WiFiLog::ENABLE)
+        {
+            LOG_DEBUG("[WIFI] Aguarde.");
+        }
         attempts++;
     }
 
@@ -88,6 +94,7 @@ void WiFiLib::connectToWiFi(WiFiItems wifi)
             LOG_INFO("[WIFI] Connected to Wi-Fi!");
             LOG_INFO("[WIFI] IP Address: %s", WiFi.localIP().toString().c_str());
         }
+        return true;
     }
     else
     {
@@ -97,8 +104,8 @@ void WiFiLib::connectToWiFi(WiFiItems wifi)
         }
         WiFi.disconnect(true);
         WiFi.mode(WIFI_OFF); // Reinicia completamente a interface Wi-Fi
+        return false;
     }
-    return;
 }
 
 void WiFiLib::WiFiEvent(WiFiEvent_t event)

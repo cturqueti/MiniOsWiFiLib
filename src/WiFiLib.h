@@ -31,12 +31,14 @@ public:
   inline bool isDhcp() { return _wifi.dhcp; }
   inline bool isSsid() { return _wifi.ssid.length() > 0; }
 
+  inline String getMdnsHostname() { return _wifi.mDns; }
+
 private:
   WiFiLib(WiFiLog log);                         // Construtor privado
   WiFiLib(const WiFiLib &) = delete;            // Previne cópia
   WiFiLib &operator=(const WiFiLib &) = delete; // Previne atribuição
 
-  void connectToWiFi(WiFiItems wifi);
+  bool connectToWiFi(WiFiItems wifi);
   void WiFiEvent(WiFiEvent_t event);
   bool _beginCredentials();
   bool _loadCredentials(WiFiItems &wifi);
