@@ -4,7 +4,7 @@ WiFiLib::WiFiLib(WiFiLog log)
 {
     _log = log;
     _wifi.configLoaded = _loadCredentials(_wifi);
-    // _wifi.configLoaded = false; // Descomente essa linha para habilitar a captivade
+    _wifi.configLoaded = false; // Descomente essa linha para habilitar a captivade
 }
 WiFiLib::~WiFiLib() {}
 

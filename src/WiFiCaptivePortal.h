@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AESDecryptor.h"
 #include "ErrorLib.h"
 #include "WiFiItems.h"
 #include "freertos/FreeRTOS.h"
@@ -26,6 +27,7 @@ private:
   TaskHandle_t _serverTaskHandle;
   WiFiLog _log;
   IPAddress _ipAp;
+  AESDecryptor _decryptor;
 
   static constexpr std::string_view nvs_namespace = "wifi_config";
   static constexpr std::string_view captivePortalFolder = "/CaptivePortal";

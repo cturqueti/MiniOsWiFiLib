@@ -1,6 +1,8 @@
 // =============================================
 // 1. CONSTANTES E ELEMENTOS DA INTERFACE
 // =============================================
+let aesKey = null;
+
 const modal = {
     element: document.getElementById('modal'),
     title: document.getElementById('modal-title'),
@@ -129,6 +131,107 @@ function areInSameNetwork(ip, gateway, subnet) {
     return ipParts.every((part, i) => (part & snParts[i]) === (gwParts[i] & snParts[i]));
 }
 
+// Função para validar o arquivo de chave
+async function validateKeyFile(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            reject("Nenhum arquivo selecionado");
+            return;
+        }
+        
+        if (!file.name.endsWith('.key')) {
+            reject("O arquivo deve ter extensão .key");
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const keyData = new Uint8Array(e.target.result);
+                // Verifica se o tamanho da chave é válido (16, 24 ou 32 bytes para AES)
+                if (keyData.length !== 16 && keyData.length !== 24 && keyData.length !== 32) {
+                    reject("Tamanho de chave inválido. Deve ser 16, 24 ou 32 bytes");
+                    return;
+                }
+                
+                // Se tudo estiver OK, armazena a chave
+                aesKey = keyData;
+                resolve(keyData);
+            } catch (error) {
+                reject("Erro ao ler o arquivo de chave");
+            }
+        };
+        reader.onerror = function() {
+            reject("Erro ao ler o arquivo");
+        };
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+// Função para mostrar o modal de chave obrigatória
+function showKeyRequiredModal() {
+    const modal = document.getElementById('key-required-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        
+        // Desabilita todas as seções exceto a de ajuda
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0.5';
+            section.style.pointerEvents = 'none';
+        });
+    }
+}
+
+// Função para esconder o modal de chave obrigatória
+function hideKeyRequiredModal() {
+    const modal = document.getElementById('key-required-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+
+        // Habilita todas as seções
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '1';
+            section.style.pointerEvents = 'auto';
+        });
+    }
+}
+
+// Evento para o input de chave obrigatória
+document.getElementById('required-keyfile').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    const statusElement = document.getElementById('required-key-status');
+    
+    try {
+        statusElement.textContent = "Validando chave...";
+        statusElement.className = "status-message processing";
+        
+        await validateKeyFile(file);
+        
+        statusElement.textContent = "Chave válida carregada com sucesso!";
+        statusElement.className = "status-message success";
+        
+        // Atualiza também o input normal de chave
+        document.getElementById('required-keyfile').files = e.target.files;
+        document.getElementById('required-key-status').textContent = "Chave válida carregada com sucesso!";
+        document.getElementById('required-key-status').className = "status-message success";
+        
+        // Esconde o modal após 1 segundo
+        setTimeout(hideKeyRequiredModal, 1000);
+    } catch (error) {
+        if (statusElement) {
+            statusElement.textContent = error;
+        }
+        
+        console.error(error); // Isso é para registrar o erro no console
+    
+        if (statusElement) {
+            statusElement.className = "status-message error";
+        }
+
+    }
+});
+
+document.addEventListener('DOMContentLoaded', init);
+
 // =============================================
 // 3. FUNÇÕES PRINCIPAIS
 // =============================================
@@ -223,6 +326,12 @@ async function loadWiFiSettings() {
 
 async function saveStaticIpConfig(e) {
     e.preventDefault();
+    
+    if (!aesKey) {
+        showModal('Erro', 'Por favor, carregue uma chave AES válida primeiro');
+        return;
+    }
+    
     setLoading(true);
 
     const ssid = wifiForm.ssidSelect.value;
@@ -242,8 +351,6 @@ async function saveStaticIpConfig(e) {
 
     modal.saveBtn.classList.add('hidden');
     
-
-
     if (!dhcp) {
         // Validação de IP estático
         if (!isValidIP(...ip)) {
@@ -268,18 +375,24 @@ async function saveStaticIpConfig(e) {
     showModal('Salvando', 'Aguarde enquanto salvamos as configurações...');
 
     try {
+        const payload = {
+            ssid,
+            password: isOpenNetwork ? '' : password,
+            dhcp,
+            mDns,
+            ip: ipStr,
+            gateway: gwStr,
+            subnet: snStr
+        };
+
+        // CRIPTOGRAFAR o payload
+        const encryptedPayload = await encryptData(payload, aesKey);
+
+        // Enviar os dados criptografados para o servidor
         const response = await fetch('/save-wifi-settings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                ssid,
-                password: isOpenNetwork ? '' : password,
-                dhcp,
-                mDns,
-                ip: ipStr,
-                gateway: gwStr,
-                subnet: snStr
-            })
+            body: JSON.stringify({ data: encryptedPayload })
         });
 
         if (!response.ok) throw new Error('Erro no servidor');
@@ -292,6 +405,84 @@ async function saveStaticIpConfig(e) {
         setLoading(false);
     }
 }
+
+async function encryptData(data, aesKey) {
+    const encoded = new TextEncoder().encode(JSON.stringify(data));
+
+    let key;
+    try {
+        key = await crypto.subtle.importKey(
+            "raw",
+            aesKey,
+            { name: "AES-GCM" },
+            false,
+            ["encrypt"]
+        );
+    } catch (error) {
+        throw error;
+    }
+
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // 96 bits IV recomendado para AES-GCM
+
+    let encrypted;
+    try {
+        encrypted = await crypto.subtle.encrypt(
+            { name: "AES-GCM", iv: iv },
+            key,
+            encoded
+        );
+    } catch (error) {
+        throw error;
+    }
+
+    const combined = new Uint8Array(iv.length + encrypted.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(encrypted), iv.length);
+
+    const base64 = btoa(String.fromCharCode(...combined));
+
+    return base64;
+}
+
+
+// Função para lidar com a seleção de arquivo de chave
+async function handleKeyFileSelection(e) {
+    const file = e.target.files[0];
+    const statusElement = document.getElementById('required-key-status');
+    
+    if (!statusElement) return;
+    
+    try {
+        statusElement.textContent = "Validando chave...";
+        statusElement.className = "status-message processing";
+        
+        await validateKeyFile(file);
+        
+        statusElement.textContent = "Chave válida carregada com sucesso!";
+        statusElement.className = "status-message success";
+        
+        // Esconde o modal após 1 segundo
+        setTimeout(hideKeyRequiredModal, 1000);
+    } catch (error) {
+        statusElement.textContent = error;
+        statusElement.className = "status-message error";
+    }
+}
+
+// Função principal que é executada quando o DOM está carregado
+function init() {
+    // Verifica se o modal e o input de arquivo existem
+    const requiredKeyInput = document.getElementById('required-keyfile');
+    if (requiredKeyInput) {
+        requiredKeyInput.addEventListener('change', handleKeyFileSelection);
+    }
+
+    // Verifica se há uma chave carregada quando a página é carregada
+    if (!aesKey) {
+        showKeyRequiredModal();
+    }
+}
+
 
 // =============================================
 // 4. CONFIGURAÇÃO DE EVENT LISTENERS
@@ -366,6 +557,29 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // =============================================
-// 5. CONFIGURAÇÃO DE DRAG AND DROP
+// Configuração de Criptografia AES
 // =============================================
 
+// Elementos da interface
+const elements = {
+    keyInput: document.getElementById('required-keyfile'),
+    loadKeyBtn: document.getElementById('load-key-btn'),
+    keyStatus: document.getElementById('required-key-status'),
+    encryptionStatus: document.getElementById('encryption-status')
+};
+
+// Estado da aplicação
+
+
+// =============================================
+// 1. Carregamento da Chave AES
+// =============================================
+
+function showKeyStatus(message, type = 'info') {
+    elements.keyStatus.textContent = message;
+    elements.keyStatus.className = 'status-message ' + type;
+}
+
+// =============================================
+// 3. Processamento e Criptografia do JSON
+// =============================================

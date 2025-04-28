@@ -15,7 +15,7 @@ body {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* ============================================= */
@@ -47,6 +47,38 @@ section {
 /* ============================================= */
 /* 3. COMPONENTES */
 /* ============================================= */
+/* Estilo para o modal de chave obrigatória */
+#key-required-modal {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#key-required-modal .modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+#key-required-modal h3 {
+    margin-top: 0;
+    color: #d32f2f;
+}
+
+#key-required-modal .file-input-group {
+    margin: 1.5rem 0;
+}
+
 /* ----- Card ----- */
 .card {
     background: rgb(216, 216, 216);
@@ -55,7 +87,7 @@ section {
     padding: 1rem;
     margin-bottom: 1rem;
     max-width: 450px; /* Tamanho ideal para mobile */
-    min-height: 400px;
+    min-height: 250px;
     margin-left: auto;
     margin-right: auto;
     transition: all 0.3s ease;
@@ -186,16 +218,139 @@ button:hover {
     animation: spin 1s linear infinite;
 }
 
-/* ----- Dropdown area----- */
+/* ===== Estilos para a seção de criptografia ===== */
+.config-file-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
 
-#drop-area {
-    border: 2px dashed #ccc;
-    padding: 20px;
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.upload-step {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.file-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.file-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.file-label {
+    padding: 0.5rem 1rem;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-grow: 1;
     text-align: center;
-  }
-  #drop-area.highlight {
-    border-color: purple;
-  }
+}
+
+.file-label:hover {
+    background: #e0e0e0;
+}
+
+.action-button {
+    background: #478ac9;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.action-button:hover {
+    background: #3a7ab8;
+}
+
+.secondary-button {
+    background: white;
+    color: #478ac9;
+    border: 1px solid #478ac9;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.secondary-button:hover {
+    background: #f0f7ff;
+}
+
+.drop-zone {
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+}
+
+.drop-zone:hover, .drop-zone.highlight {
+    border-color: #478ac9;
+    background: rgba(71, 138, 201, 0.05);
+}
+
+.drop-zone svg {
+    margin-bottom: 1rem;
+}
+
+.drop-zone p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.drop-zone .small {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.status-message {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.status-message.processing {
+    background-color: #fff3e0;
+    color: #e65100;
+}
+
+.status-message.success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-message.error {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.status-message.info {
+    background: #e3f2fd;
+    color: #1565c0;
+}
 
 /* ----- Modal ----- */
 #modal {

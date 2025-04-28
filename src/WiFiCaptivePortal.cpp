@@ -559,38 +559,69 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
     {
         LOG_INFO("[CAPTIVE PORTAL] Received connect request");
     }
-    JsonDocument doc, docFile;
-    DeserializationError error = deserializeJson(doc, _server.arg("plain"));
-    if (error)
+
+    // 1. Inicializar o Decryptor
+    _decryptor.begin("/chave_aes.key");
+    if (!_decryptor.loadKey())
     {
-        _server.send(400, "application/json", "{\"success\":false,\"message\":\"JSON inválido\"}");
+        _server.send(500, "application/json", "{\"success\":false,\"message\":\"Erro ao carregar chave AES\"}");
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] JSON inválido: %s", error.c_str());
+            LOG_ERROR("[CAPTIVE PORTAL] Erro ao carregar chave AES");
         }
+        ERRORS_LIST.addError(ErrorCode::KEY_LOAD_ERROR);
         return;
     }
+
+    // 2. Criar documento JSON para os dados descriptografados
+    JsonDocument decryptedDoc;
+
+    // 3. Descriptografar os dados recebidos
+    if (!_decryptor.decryptToJson(_server.arg("plain"), decryptedDoc))
+    {
+        _server.send(400, "application/json", "{\"success\":false,\"message\":\"Falha ao descriptografar dados\"}");
+        if (_log == WiFiLog::ENABLE)
+        {
+            LOG_ERROR("[CAPTIVE PORTAL] Falha ao descriptografar dados");
+        }
+        ERRORS_LIST.addError(ErrorCode::DECRYPT_ERROR);
+        return;
+    }
+
+    // JsonDocument doc, docFile;
+    // DeserializationError error = deserializeJson(doc, _server.arg("plain"));
+    // if (error)
+    // {
+    //     _server.send(400, "application/json", "{\"success\":false,\"message\":\"JSON inválido\"}");
+    //     if (_log == WiFiLog::ENABLE)
+    //     {
+    //         LOG_ERROR("[CAPTIVE PORTAL] JSON inválido: %s", error.c_str());
+    //     }
+    //     return;
+    // }
+
+    // 4. Processar os dados descriptografados (seu código original com pequenas adaptações)
     WiFiItems config;
     // 1. Obter dados básicos
-    config.ssid = doc["ssid"].as<String>();
-    config.password = doc["password"].as<String>();
-    config.dhcp = doc["dhcp"].as<bool>();
-    config.mDns = doc["mDns"].as<String>();
+    config.ssid = decryptedDoc["ssid"].as<String>();
+    config.password = decryptedDoc["password"].as<String>();
+    config.dhcp = decryptedDoc["dhcp"].as<bool>();
+    config.mDns = decryptedDoc["mDns"].as<String>();
     if (!config.dhcp)
     {
-        if (!config.ip.fromString(doc["ip"].as<String>()))
+        if (!config.ip.fromString(decryptedDoc["ip"].as<String>()))
         {
             LOG_ERROR("[CAPTIVE PORTAL] IP estático inválido");
             return;
         }
 
-        if (!config.gateway.fromString(doc["gateway"].as<String>()))
+        if (!config.gateway.fromString(decryptedDoc["gateway"].as<String>()))
         {
             LOG_ERROR("[CAPTIVE PORTAL] Gateway inválido");
             return;
         }
 
-        if (!config.subnet.fromString(doc["subnet"].as<String>()))
+        if (!config.subnet.fromString(decryptedDoc["subnet"].as<String>()))
         {
             LOG_ERROR("[CAPTIVE PORTAL] Máscara de sub-rede inválida");
             return;

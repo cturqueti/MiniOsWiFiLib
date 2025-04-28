@@ -16,8 +16,7 @@
                 <li><a href="#block-1">Início</a></li>
                 <li><a href="#block-2">Credenciais</a></li>
                 <li><a href="#block-3">Configurações</a></li>
-                <li><a href="#block-4">AesKey</a></li>
-                <li><a href="#block-5">Ajuda</a></li>
+                <li><a href="#block-4">Ajuda</a></li>
             </ul>
         </nav>
     </header>
@@ -115,25 +114,28 @@
         </form>
     </section>
 
+
+
     <section id="block-4" class="card">
-        <h2>Dropdown area</h2>
-        <form id="dropdown-form">
-            <div id="drop-area">
-                <p>Arraste e solte o arquivo JSON de configuração aqui</p>
-                <input type="file" id="fileElem" accept=".json" style="display:none">
-                <button id="fileSelect">Ou clique para selecionar</button>
-              </div>
-              <div id="status"></div>
-        </form>
-
-    </section>
-
-    <section id="block-5" class="card">
         <h2>Ajuda</h2>
         <p><strong>Seleção de Rede:</strong> Escolha sua rede WiFi e insira a senha</p>
+        <p><strong>Configuração de rede:</strong> Configure manualmente se necessário</p>
+        <p><strong>Gerar chave AES:</strong> openssl rand 32 > chave.key</p>
         <p><strong>IP Estático:</strong> Configure manualmente se necessário</p>
         <p><strong>Suporte:</strong> contato@exemplo.com</p>
     </section>
+
+    <div id="key-required-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Chave AES Requerida</h3>
+            <p>Você deve carregar um arquivo de chave AES válido (.key) antes de continuar.</p>
+            <div class="file-input-group">
+                <input type="file" id="required-keyfile" accept=".key" class="file-input">
+                <label for="required-keyfile" class="file-label">Selecionar Arquivo .key</label>
+            </div>
+            <div id="required-key-status" class="status-message"></div>
+        </div>
+    </div>
 
     <footer>
         <p>Desenvolvido para ESP32</p>
