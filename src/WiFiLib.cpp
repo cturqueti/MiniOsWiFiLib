@@ -90,16 +90,22 @@ bool WiFiLib::connectToWiFi(WiFiItems wifi)
     const int maxAttempts = 50;
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_INFO("[WIFI] Conectando...");
+        Log::enableNewline(false);
+        LOG_INFO("[WIFI] Conectando.");
     }
     while (WiFi.status() != WL_CONNECTED && attempts < maxAttempts)
     {
         vTaskDelay(pdMS_TO_TICKS(200));
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_DEBUG("[WIFI] Aguarde.");
+            Serial0.print(".");
         }
         attempts++;
+    }
+    if (_log == WiFiLog::ENABLE)
+    {
+        Serial0.println("");
+        Log::enableNewline(true);
     }
 
     if (WiFi.status() == WL_CONNECTED)
