@@ -20,14 +20,14 @@ void WiFiLib::begin()
             {
                 if (_log == WiFiLog::ENABLE)
                 {
-                    LOG_INFO("[WIFI] Wi-Fi started");
+                    LOG_INFO("Wi-Fi started");
                 }
                 _loadSettings();
                 if (!MDNS.begin(_wifi.mDns))
                 {
                     if (_log == WiFiLog::ENABLE)
                     {
-                        LOG_ERROR("[WIFI] MDNS nao iniciado com hostname: %s", _wifi.mDns.c_str());
+                        LOG_ERROR("MDNS nao iniciado com hostname: %s", _wifi.mDns.c_str());
                     }
                     ERRORS_LIST.addError(ErrorCode::MDNS_NOT_STARTED);
                 }
@@ -35,7 +35,7 @@ void WiFiLib::begin()
                 {
                     if (_log == WiFiLog::ENABLE)
                     {
-                        LOG_INFO("[WIFI] MDNS started with hostname: %s", _wifi.mDns.c_str());
+                        LOG_INFO("MDNS started with hostname: %s", _wifi.mDns.c_str());
                     }
                 }
             }
@@ -44,7 +44,7 @@ void WiFiLib::begin()
         {
             if (_log == WiFiLog::ENABLE)
             {
-                LOG_ERROR("[WIFI] SSID nao configurado");
+                LOG_ERROR("SSID nao configurado");
             }
             ERRORS_LIST.addError(ErrorCode::SSID_NOT_FOUND);
         }
@@ -71,8 +71,8 @@ bool WiFiLib::connectToWiFi(WiFiItems wifi)
 {
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_DEBUG("[WIFI] Connecting to Wi-Fi...");
-        LOG_DEBUG("[WIFI] SSID: %s", wifi.ssid.c_str());
+        LOG_DEBUG("Connecting to Wi-Fi...");
+        LOG_DEBUG("SSID: %s", wifi.ssid.c_str());
     }
     WiFi.mode(WIFI_STA);
     if (!wifi.dhcp)
@@ -91,7 +91,7 @@ bool WiFiLib::connectToWiFi(WiFiItems wifi)
     if (_log == WiFiLog::ENABLE)
     {
         Log::enableNewline(false);
-        LOG_INFO("[WIFI] Conectando.");
+        LOG_INFO("Conectando.");
     }
     while (WiFi.status() != WL_CONNECTED && attempts < maxAttempts)
     {
@@ -112,8 +112,8 @@ bool WiFiLib::connectToWiFi(WiFiItems wifi)
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[WIFI] Connected to Wi-Fi!");
-            LOG_INFO("[WIFI] IP Address: %s", WiFi.localIP().toString().c_str());
+            LOG_INFO("Connected to Wi-Fi!");
+            LOG_INFO("IP Address: %s", WiFi.localIP().toString().c_str());
         }
         return true;
     }
@@ -121,7 +121,7 @@ bool WiFiLib::connectToWiFi(WiFiItems wifi)
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_WARN("[WIFI] Failed to connect to Wi-Fi.");
+            LOG_WARN("Failed to connect to Wi-Fi.");
         }
         WiFi.disconnect(true);
         WiFi.mode(WIFI_OFF); // Reinicia completamente a interface Wi-Fi
@@ -136,28 +136,28 @@ void WiFiLib::WiFiEvent(WiFiEvent_t event)
     case ARDUINO_EVENT_WIFI_SCAN_DONE:
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[WIFI] Wi-Fi scan done");
+            LOG_INFO("Wi-Fi scan done");
         }
         break;
 
     case ARDUINO_EVENT_WIFI_STA_START:
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[WIFI] Wi-Fi STA started");
+            LOG_INFO("Wi-Fi STA started");
         }
         break;
 
     case ARDUINO_EVENT_WIFI_STA_STOP:
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[WIFI] Wi-Fi STA stopped");
+            LOG_INFO("Wi-Fi STA stopped");
         }
         break;
 
     case ARDUINO_EVENT_WIFI_STA_CONNECTED:
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[WIFI] Wi-Fi STA connected");
+            LOG_INFO("Wi-Fi STA connected");
         }
         _wifi.connectionStatus = ARDUINO_EVENT_WIFI_STA_CONNECTED;
         break;
@@ -165,7 +165,7 @@ void WiFiLib::WiFiEvent(WiFiEvent_t event)
     case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[WIFI] Wi-Fi STA disconnected");
+            LOG_INFO("Wi-Fi STA disconnected");
         }
         _wifi.connectionStatus = ARDUINO_EVENT_WIFI_STA_DISCONNECTED;
         break;
@@ -173,7 +173,7 @@ void WiFiLib::WiFiEvent(WiFiEvent_t event)
     default:
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[WIFI] Unhandled Wi-Fi event: %d", event);
+            LOG_INFO("Unhandled Wi-Fi event: %d", event);
         }
         break;
     }
@@ -185,7 +185,7 @@ bool WiFiLib::_beginCredentials()
     { // Use c_str() para String
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[WiFi] Error on load NVS");
+            LOG_ERROR("Error on load NVS");
         }
         ERRORS_LIST.addError(ErrorCode::NVS_BEGIN_ERROR);
         return false;
@@ -204,14 +204,14 @@ bool WiFiLib::_loadCredentials(WiFiItems &wifi)
         {
             if (_log == WiFiLog::ENABLE)
             {
-                LOG_INFO("[WiFi] Loaded SSID: %s", wifi.ssid);
-                LOG_DEBUG("[WiFi] Loaded Password: %s", wifi.password);
+                LOG_INFO("Loaded SSID: %s", wifi.ssid);
+                LOG_DEBUG("Loaded Password: %s", wifi.password);
             }
             return true;
         }
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[WiFi] Don't have SSID");
+            LOG_ERROR("Don't have SSID");
         }
         ERRORS_LIST.addError(ErrorCode::SSID_NOT_FOUND);
     }
@@ -223,7 +223,7 @@ bool WiFiLib::_loadSettings()
 {
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_INFO("[WiFi] Loading settings");
+        LOG_INFO("Loading settings");
     }
 
     JsonDocument doc;
@@ -233,7 +233,7 @@ bool WiFiLib::_loadSettings()
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[WiFi] Failed to open file %s for reading", configPath.c_str());
+            LOG_ERROR("Failed to open file %s for reading", configPath.c_str());
         }
         ERRORS_LIST.addError(ErrorCode::FILE_NOT_FOUND);
         return false;
@@ -244,7 +244,7 @@ bool WiFiLib::_loadSettings()
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[WiFi] JSON inválido: %s", error.c_str());
+            LOG_ERROR("JSON inválido: %s", error.c_str());
         }
         ERRORS_LIST.addError(ErrorCode::JSON_ERROR);
         return false;
@@ -268,11 +268,11 @@ bool WiFiLib::_loadSettings()
 
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_DEBUG("[WiFi] mDns: %s", _wifi.mDns);
-        LOG_DEBUG("[WiFi] dhcp: %s", _wifi.dhcp ? "true" : "false");
-        LOG_DEBUG("[WiFi] ip: %s", _wifi.ip.toString().c_str());
-        LOG_DEBUG("[WiFi] gateway: %s", _wifi.gateway.toString().c_str());
-        LOG_DEBUG("[WiFi] subnet: %s", _wifi.subnet.toString().c_str());
+        LOG_DEBUG("mDns: %s", _wifi.mDns);
+        LOG_DEBUG("dhcp: %s", _wifi.dhcp ? "true" : "false");
+        LOG_DEBUG("ip: %s", _wifi.ip.toString().c_str());
+        LOG_DEBUG("gateway: %s", _wifi.gateway.toString().c_str());
+        LOG_DEBUG("subnet: %s", _wifi.subnet.toString().c_str());
     }
     return true;
 }

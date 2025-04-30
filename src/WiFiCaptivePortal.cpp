@@ -8,7 +8,7 @@ WiFiCaptivePortal::WiFiCaptivePortal(WiFiLog log) : _server(80), _isRunning(fals
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Failed to mount LittleFS");
+            LOG_ERROR("Failed to mount LittleFS");
         }
         ERRORS_LIST.addError(ErrorCode::LITTLEFS_MOUNT_ERROR);
     }
@@ -17,7 +17,7 @@ WiFiCaptivePortal::WiFiCaptivePortal(WiFiLog log) : _server(80), _isRunning(fals
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Pasta %s não encontrada", captivePortalFolder.data());
+            LOG_ERROR("Pasta %s não encontrada", captivePortalFolder.data());
         }
         ERRORS_LIST.addError(ErrorCode::FILE_NOT_FOUND);
     }
@@ -35,7 +35,7 @@ void WiFiCaptivePortal::begin()
     }
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_INFO("[CAPTIVE PORTAL] Iniciando AP");
+        LOG_INFO("Iniciando AP");
     }
     _startAP();
     _setupDNS();
@@ -72,7 +72,7 @@ void WiFiCaptivePortal::_startAP()
     WiFi.softAPConfig(_ipAp, _ipAp, IPAddress(255, 255, 255, 0));
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_INFO("[CAPTIVE PORTAL] AP IP address: %s", WiFi.softAPIP().toString().c_str());
+        LOG_INFO("AP IP address: %s", WiFi.softAPIP().toString().c_str());
     }
 }
 
@@ -82,7 +82,7 @@ void WiFiCaptivePortal::_setupDNS()
 
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_INFO("[CAPTIVE PORTAL] DNS server started on %s", WiFi.softAPIP().toString().c_str());
+        LOG_INFO("DNS server started on %s", WiFi.softAPIP().toString().c_str());
     }
 }
 
@@ -91,7 +91,7 @@ void WiFiCaptivePortal::_setupServer()
     _server.on("/", HTTP_GET, [this]()
                {
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Serving index page /");
+            LOG_INFO("Serving index page /");
         }
         _handleRoot(); });
 
@@ -99,7 +99,7 @@ void WiFiCaptivePortal::_setupServer()
                {
                    if (_log == WiFiLog::ENABLE)
                    {
-                       LOG_INFO("[CAPTIVE PORTAL] Serving index page /index.html");
+                       LOG_INFO("Serving index page /index.html");
                    }
                    _handleRoot(); // Redireciona para a raiz
                });
@@ -107,7 +107,7 @@ void WiFiCaptivePortal::_setupServer()
     _server.on("/config.html", HTTP_GET, [this]()
                {
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Serving config page /config.html");
+            LOG_INFO("Serving config page /config.html");
         }
         _handleConfig(); });
 
@@ -115,7 +115,7 @@ void WiFiCaptivePortal::_setupServer()
     _server.on("/connecttest.txt", HTTP_GET, [this]()
                {
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Received connecttest.txt request");
+            LOG_INFO("Received connecttest.txt request");
         }
         // _server.send(200, "text/plain", "Microsoft NCSI");
         _server.sendHeader("Location", "/"); // Redireciona para a página do portal
@@ -124,7 +124,7 @@ void WiFiCaptivePortal::_setupServer()
     _server.on("/hotspot-detect.html", HTTP_GET, [this]()
                {
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Received hotspot-detect.html request");
+            LOG_INFO("Received hotspot-detect.html request");
         }
         _server.sendHeader("Location", "/");
         _server.send(302, "text/plain", ""); });
@@ -133,7 +133,7 @@ void WiFiCaptivePortal::_setupServer()
                {
                    if (_log == WiFiLog::ENABLE)
                    {
-                       LOG_INFO("[CAPTIVE PORTAL] Received ncsi.txt request");
+                       LOG_INFO("Received ncsi.txt request");
                    }
                    // _server.send(200, "text/plain", "Microsoft NCSI");
                    _server.sendHeader("Location", "/"); // Redireciona para a página do portal
@@ -145,7 +145,7 @@ void WiFiCaptivePortal::_setupServer()
                {
                    if (_log == WiFiLog::ENABLE)
                    {
-                       LOG_INFO("[CAPTIVE PORTAL] Received generate_204 request");
+                       LOG_INFO("Received generate_204 request");
                    }
                    // _server.send(200, "text/plain", "Microsoft NCSI");
                    _server.sendHeader("Location", "/"); // Redireciona para a página do portal
@@ -156,7 +156,7 @@ void WiFiCaptivePortal::_setupServer()
     _server.on("/favicon.ico", HTTP_GET, [this]()
                {
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Received favicon.ico request");
+            LOG_INFO("Received favicon.ico request");
         }
         String iconPath = String(captivePortalFolder.data()) + "/icon.png";
         if (LittleFS.exists(iconPath)) {
@@ -177,7 +177,7 @@ void WiFiCaptivePortal::_setupServer()
     _server.on("/success", HTTP_GET, [this]()
                {
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Received success request");
+            LOG_INFO("Received success request");
         }
         _server.sendHeader("Location", "/config.html");
         _server.send(302, "text/plain", "Redirecting to config"); });
@@ -185,7 +185,7 @@ void WiFiCaptivePortal::_setupServer()
     _server.on("/wifi-settings", HTTP_GET, [this]()
                {
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Received wifi-settings request");
+            LOG_INFO("Received wifi-settings request");
         }
 
         String path = String(configFolder.data()) + "/configWiFi.json";
@@ -201,7 +201,7 @@ void WiFiCaptivePortal::_setupServer()
         String json = _loadFromLittleFS(path);
         if (json.isEmpty()) {
             if (_log == WiFiLog::ENABLE) {
-                LOG_ERROR("[CAPTIVE PORTAL] Failed to open file: %s", path.c_str());
+                LOG_ERROR("Failed to open file: %s", path.c_str());
             }
             _server.send(404, "text/plain", "File not found");
             return;
@@ -214,7 +214,7 @@ void WiFiCaptivePortal::_setupServer()
                        {
         _handleRoot();
         if (_log == WiFiLog::ENABLE) {
-            LOG_INFO("[CAPTIVE PORTAL] Page not found: %s", _server.uri().c_str());
+            LOG_INFO("Page not found: %s", _server.uri().c_str());
         }
         _server.sendHeader("Location", "/");
         _server.send(302, "text/plain", "Redirecting to /"); });
@@ -243,14 +243,14 @@ String WiFiCaptivePortal::_loadFromLittleFS(const String &path)
 {
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_DEBUG("[CAPTIVE PORTAL] Loading file: %s", path.c_str());
+        LOG_DEBUG("Loading file: %s", path.c_str());
     }
     File file = LittleFS.open(path, "r");
     if (!file)
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Failed to open file: %s", path.c_str());
+            LOG_ERROR("Failed to open file: %s", path.c_str());
         }
         ERRORS_LIST.addError(ErrorCode::FILE_NOT_FOUND);
         return "";
@@ -375,7 +375,7 @@ bool WiFiCaptivePortal::_saveSettings(WiFiItems &settings)
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Failed to open file %s for writing", configPath.c_str());
+            LOG_ERROR("Failed to open file %s for writing", configPath.c_str());
         }
         ERRORS_LIST.addError(ErrorCode::FILE_NOT_CREATED);
         _server.send(404, "text/plain", "Config page not found");
@@ -406,7 +406,7 @@ bool WiFiCaptivePortal::_saveSettings(WiFiItems &settings)
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Failed to write to file");
+            LOG_ERROR("Failed to write to file");
         }
         ERRORS_LIST.addError(ErrorCode::FILE_NOT_CREATED);
         _server.send(404, "text/plain", "Config page not found");
@@ -460,7 +460,7 @@ void WiFiCaptivePortal::_logError(const __FlashStringHelper *message, const Stri
 {
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_ERROR("[CAPTIVE PORTAL] %s: %s", message, path.c_str());
+        LOG_ERROR("%s: %s", message, path.c_str());
     }
     ERRORS_LIST.addError(code);
 }
@@ -491,7 +491,7 @@ void WiFiCaptivePortal::_handleScanWifi()
 {
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_DEBUG("[CAPTIVE PORTAL] Handling WiFi scan request");
+        LOG_DEBUG("Handling WiFi scan request");
     }
 
     // Realiza o scan das redes WiFi
@@ -515,7 +515,7 @@ void WiFiCaptivePortal::_handleScanWifi()
 
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_DEBUG("[CAPTIVE PORTAL] Found network: %s (%ddBm)", WiFi.SSID(i).c_str(), WiFi.RSSI(i));
+            LOG_DEBUG("Found network: %s (%ddBm)", WiFi.SSID(i).c_str(), WiFi.RSSI(i));
         }
     }
 
@@ -534,14 +534,14 @@ void WiFiCaptivePortal::_handleConfig()
 {
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_DEBUG("[CAPTIVE PORTAL] Loading config page...");
+        LOG_DEBUG("Loading config page...");
     }
     String configPath = String(captivePortalFolder.data()) + "/config.json";
     if (!LittleFS.exists(configPath))
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] %s not found", configPath.c_str());
+            LOG_ERROR("%s not found", configPath.c_str());
         }
         ERRORS_LIST.addError(ErrorCode::FILE_NOT_FOUND);
         _server.send(404, "text/plain", "Config page not found");
@@ -557,7 +557,7 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
 {
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_INFO("[CAPTIVE PORTAL] Received connect request");
+        LOG_INFO("Received connect request");
     }
     JsonDocument doc, docFile;
     DeserializationError error = deserializeJson(doc, _server.arg("plain"));
@@ -566,7 +566,7 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
         _server.send(400, "application/json", "{\"success\":false,\"message\":\"JSON inválido\"}");
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] JSON inválido: %s", error.c_str());
+            LOG_ERROR("JSON inválido: %s", error.c_str());
         }
         return;
     }
@@ -580,34 +580,34 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
     {
         if (!config.ip.fromString(doc["ip"].as<String>()))
         {
-            LOG_ERROR("[CAPTIVE PORTAL] IP estático inválido");
+            LOG_ERROR("IP estático inválido");
             return;
         }
 
         if (!config.gateway.fromString(doc["gateway"].as<String>()))
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Gateway inválido");
+            LOG_ERROR("Gateway inválido");
             return;
         }
 
         if (!config.subnet.fromString(doc["subnet"].as<String>()))
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Máscara de sub-rede inválida");
+            LOG_ERROR("Máscara de sub-rede inválida");
             return;
         }
     }
 
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_DEBUG("[CAPTIVE PORTAL] SSID: %s", config.ssid.c_str());
-        LOG_DEBUG("[CAPTIVE PORTAL] Password: %s", config.password.c_str());
-        LOG_DEBUG("[CAPTIVE PORTAL] DHCP Mode: %d", config.dhcp);
-        LOG_DEBUG("[CAPTIVE PORTAL] mDns: %s", config.mDns.c_str());
+        LOG_DEBUG("SSID: %s", config.ssid.c_str());
+        LOG_DEBUG("Password: %s", config.password.c_str());
+        LOG_DEBUG("DHCP Mode: %d", config.dhcp);
+        LOG_DEBUG("mDns: %s", config.mDns.c_str());
         if (!config.dhcp)
         {
-            LOG_DEBUG("[CAPTIVE PORTAL] IP: %s", config.ip.toString().c_str());
-            LOG_DEBUG("[CAPTIVE PORTAL] Gateway: %s", config.gateway.toString().c_str());
-            LOG_DEBUG("[CAPTIVE PORTAL] Subnet: %s", config.subnet.toString().c_str());
+            LOG_DEBUG("IP: %s", config.ip.toString().c_str());
+            LOG_DEBUG("Gateway: %s", config.gateway.toString().c_str());
+            LOG_DEBUG("Subnet: %s", config.subnet.toString().c_str());
         }
     }
 
@@ -630,7 +630,7 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
 
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[CAPTIVE PORTAL] Connected to WiFi. IP: %s", WiFi.localIP().toString().c_str());
+            LOG_INFO("Connected to WiFi. IP: %s", WiFi.localIP().toString().c_str());
         }
 
         JsonDocument responseDoc;
@@ -662,7 +662,7 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
     { // "esp32" será o nome do seu dispositivo
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_ERROR("[CAPTIVE PORTAL] Erro ao iniciar mDNS");
+            LOG_ERROR("Erro ao iniciar mDNS");
         }
         ERRORS_LIST.addError(ErrorCode::MDNS_ERROR);
     }
@@ -670,12 +670,12 @@ void WiFiCaptivePortal::_handleSaveWiFiSettings()
     {
         if (_log == WiFiLog::ENABLE)
         {
-            LOG_INFO("[CAPTIVE PORTAL] mDNS iniciado com sucesso, com hostname: %s", config.mDns.c_str());
+            LOG_INFO("mDNS iniciado com sucesso, com hostname: %s", config.mDns.c_str());
         }
     }
     if (_log == WiFiLog::ENABLE)
     {
-        LOG_INFO("[CAPTIVE PORTAL] mDNS iniciado");
+        LOG_INFO("mDNS iniciado");
     }
 
     // Adicione serviços (opcional)
