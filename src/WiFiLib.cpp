@@ -117,20 +117,20 @@ bool WiFiLib::connectToWiFi(WiFiItems wifi)
             LOG_INFO("IP Address: %s", WiFi.localIP().toString().c_str());
         }
 
-        if (Log::syncTime("UTC", "a.st1.ntp.br", "ntp.cais.rnp.br"))
-        {
-            if (_log == WiFiLog::ENABLE)
-            {
-                LOG_INFO("Time synchronized.");
-            }
-        }
-        else
-        {
-            if (_log == WiFiLog::ENABLE)
-            {
-                LOG_WARN("Failed to synchronize time.");
-            }
-        }
+        // if (Log::syncTime())
+        // {
+        //     if (_log == WiFiLog::ENABLE)
+        //     {
+        //         LOG_INFO("Time synchronized.");
+        //     }
+        // }
+        // else
+        // {
+        //     if (_log == WiFiLog::ENABLE)
+        //     {
+        //         LOG_WARN("Failed to synchronize time.");
+        //     }
+        // }
         return true;
     }
     else
